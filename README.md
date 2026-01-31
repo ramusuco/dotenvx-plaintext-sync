@@ -5,9 +5,9 @@ CLI tool for syncing encrypted `.env` files across teams using dotenvx.
 ## Features
 
 - **Simple CLI** - `dxsync init`, `dxsync encrypt`, `dxsync decrypt`
-- **Per-environment encryption** - Separate keys for dev, stg, prd
+- **Per-environment encryption** - Separate keys for development, staging, production
 - **Non-destructive** - Never overwrites your local plaintext `.env` files
-- **Configurable** - Customize paths via `dxsync.json`
+- **Flexible paths** - Configure env file locations via `dxsync.json`
 
 ## Prerequisites
 
@@ -39,17 +39,17 @@ cd your-project
 dxsync init
 
 # 2. Create your plaintext env file
-echo "API_KEY=secret123" > .env/dev
+echo "API_KEY=secret123" > envs/.env.development
 
 # 3. Encrypt it
-dxsync encrypt dev
-# → Creates enc/.env.dev.enc and .env/keys/dev.keys
+dxsync encrypt development
+# → Creates enc/.env.development.enc and envs/keys/development.keys
 
-# 4. Share .env/keys/dev.keys with your team securely
+# 4. Share envs/keys/development.keys with your team securely
 
 # 5. Commit the encrypted file
-git add enc/.env.dev.enc
-git commit -m "Add encrypted dev env"
+git add enc/.env.development.enc
+git commit -m "Add encrypted development env"
 ```
 
 ## Directory Structure
@@ -60,13 +60,15 @@ After `dxsync init`:
 your-project/
 ├── dxsync.json             # Configuration
 ├── enc/                    # Encrypted files (commit these)
-│   └── .env.dev.enc
-├── .env/                   # Local files (gitignored)
-│   ├── dev                 # Plaintext source
+│   └── .env.development.enc
+├── envs/                   # Local files (gitignored)
+│   ├── .env.development    # Plaintext source
+│   ├── .env.staging
+│   ├── .env.production
 │   ├── keys/               # Key files
-│   │   └── dev.keys
+│   │   └── development.keys
 │   └── latest/             # Decrypted output
-│       └── .env.dev
+│       └── .env.development
 └── .gitignore              # Updated by dxsync init
 ```
 
@@ -77,8 +79,8 @@ your-project/
 Add or update keys in your plaintext file, then encrypt:
 
 ```bash
-# Edit .env/dev with your values
-dxsync encrypt dev
+# Edit envs/.env.development with your values
+dxsync encrypt development
 ```
 
 - First run: auto-generates key file and `.enc`
@@ -89,15 +91,15 @@ dxsync encrypt dev
 Get the key file from your team, then:
 
 ```bash
-dxsync decrypt dev
-# → Output: .env/latest/.env.dev
+dxsync decrypt development
+# → Output: envs/latest/.env.development
 ```
 
 ### Change existing values
 
-1. Remove the key from `enc/.env.dev.enc`
-2. Update value in `.env/dev`
-3. Run `dxsync encrypt dev`
+1. Remove the key from `enc/.env.development.enc`
+2. Update value in `envs/.env.development`
+3. Run `dxsync encrypt development`
 
 ## Configuration
 
@@ -105,8 +107,12 @@ Edit `dxsync.json` to customize:
 
 ```json
 {
-  "envs": ["dev", "stg", "prd"],
-  "env_dir": ".env",
+  "env_dir": "envs",
+  "envs": {
+    "development": "envs/.env.development",
+    "staging": "envs/.env.staging",
+    "production": "envs/.env.production"
+  },
   "enc_dir": "enc",
   "work_dir": "tmp/dxsync"
 }
@@ -116,10 +122,28 @@ Or use `pyproject.toml`:
 
 ```toml
 [tool.dxsync]
-envs = ["dev", "stg", "prd"]
-env_dir = ".env"
+env_dir = "envs"
 enc_dir = "enc"
+
+[tool.dxsync.envs]
+development = "envs/.env.development"
+staging = "envs/.env.staging"
+production = "envs/.env.production"
 ```
+
+### Custom paths example
+
+```json
+{
+  "env_dir": "config/env",
+  "envs": {
+    "dev": "config/env/.env.dev",
+    "prod": "config/env/.env.prod"
+  }
+}
+```
+
+Note: All env paths must be under `env_dir` for security (gitignore protection).
 
 ## Design Principles
 
