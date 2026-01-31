@@ -7,8 +7,12 @@ from env_share.config import Config, CONFIG_FILE, GITIGNORE_PATH
 logger = logging.getLogger(__name__)
 
 DEFAULT_CONFIG = {
-    "envs": ["dev", "stg", "prd"],
-    "env_dir": ".env",
+    "env_dir": "envs",
+    "envs": {
+        "development": "envs/.env.development",
+        "staging": "envs/.env.staging",
+        "production": "envs/.env.production",
+    },
     "enc_dir": "enc",
     "work_dir": "tmp/dxsync",
 }

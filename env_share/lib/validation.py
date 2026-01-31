@@ -63,4 +63,4 @@ def validate_environment(env: str) -> None:
         raise ValueError("Environment format is invalid")
     if env not in cfg.envs:
         raise ValueError(
-            f"Environment '{env}' is not recognized. Valid environments: {', '.join(cfg.envs)}")
+            f"Environment '{env}' is not recognized. Valid environments: {', '.join(cfg.env_names)}")
