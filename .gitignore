@@ -4,6 +4,7 @@
 
 !dotenvx_plaintext_sync/
 !dotenvx_plaintext_sync/**
+__pycache__/
 !LICENSE
 !README.md
 !pyproject.toml

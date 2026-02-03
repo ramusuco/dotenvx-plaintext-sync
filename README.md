@@ -1,8 +1,8 @@
-# dotenvx-ops
+# dotenvx-plaintext-sync
 
 CLI tool for syncing encrypted `.env` files across teams using dotenvx.
 
-## Why dotenvx-ops?
+## Why dotenvx-plaintext-sync?
 
 [dotenvx](https://dotenvx.com/) is a great tool for encrypting `.env` files. It's designed to run apps with encrypted env files directly (`dotenvx run`), but sometimes you need **plaintext** `.env` files:
 
@@ -19,13 +19,13 @@ When decrypting `.env` files manually, operational risks emerge:
 - **Multi-environment chaos** - Managing dev/staging/production separately is tedious
 - **Accidental commits** - Easy to forget gitignore and leak secrets
 
-### How dotenvx-ops helps
+### How dotenvx-plaintext-sync helps
 
 | Problem | Solution |
 |---------|----------|
 | Path mistakes | Config file manages all paths centrally |
 | OS differences | Consistent interface across platforms |
-| Multi-environment | Just specify env name: `dotenvx-ops encrypt development` |
+| Multi-environment | Just specify env name: `dxps encrypt development` |
 | Accidental commits | Auto-configures gitignore, validates env paths are protected |
 | Overwriting team values | Append-only encryption preserves existing keys |
 | Losing local changes | Non-destructive decrypt outputs to `latest/`, not your working file |
@@ -50,7 +50,7 @@ curl -sfS https://dotenvx.sh | sh
 ## Installation
 
 ```bash
-pip install dotenvx-ops
+pip install dotenvx-plaintext-sync
 ```
 
 ## Quick Start
@@ -58,13 +58,13 @@ pip install dotenvx-ops
 ```bash
 # 1. Initialize in your project
 cd your-project
-dotenvx-ops init
+dxps init
 
 # 2. Create your plaintext env file
 echo "API_KEY=secret123" > envs/.env.development
 
 # 3. Encrypt it
-dotenvx-ops encrypt development
+dxps encrypt development
 # → Creates enc/.env.development.enc and envs/keys/development.keys
 
 # 4. Share envs/keys/development.keys with your team securely
@@ -76,11 +76,11 @@ git commit -m "Add encrypted development env"
 
 ## Directory Structure
 
-After `dotenvx-ops init`:
+After `dxps init`:
 
 ```
 your-project/
-├── dotenvx-ops.json        # Configuration
+├── dxps.json               # Configuration
 ├── enc/                    # Encrypted files (commit these)
 │   └── .env.development.enc
 ├── envs/                   # Local files (gitignored)
@@ -101,7 +101,7 @@ your-project/
 Add or update keys in your plaintext file, then encrypt:
 
 ```bash
-dotenvx-ops encrypt development
+dxps encrypt development
 ```
 
 - First run: generates key file and `.enc`
@@ -112,7 +112,7 @@ dotenvx-ops encrypt development
 To update values that already exist in the encrypted file:
 
 ```bash
-dotenvx-ops encrypt development --update
+dxps encrypt development --update
 ```
 
 This will:
@@ -138,7 +138,7 @@ Apply these changes? [y/N]:
 Decrypt to `latest/` directory (safe, doesn't overwrite your working file):
 
 ```bash
-dotenvx-ops decrypt development
+dxps decrypt development
 # → Output: envs/latest/.env.development
 ```
 
@@ -147,13 +147,13 @@ dotenvx-ops decrypt development
 Decrypt and apply directly to your working file in one step:
 
 ```bash
-dotenvx-ops pull development
+dxps pull development
 # → Decrypts and copies to envs/.env.development
 ```
 
 ## Configuration
 
-Edit `dotenvx-ops.json`:
+Edit `dxps.json`:
 
 ```json
 {
@@ -164,18 +164,18 @@ Edit `dotenvx-ops.json`:
     "production": "envs/.env.production"
   },
   "enc_dir": "enc",
-  "work_dir": "tmp/dotenvx-ops"
+  "work_dir": "tmp/dxps"
 }
 ```
 
 Or use `pyproject.toml`:
 
 ```toml
-[tool.dotenvx-ops]
+[tool.dxps]
 env_dir = "envs"
 enc_dir = "enc"
 
-[tool.dotenvx-ops.envs]
+[tool.dxps.envs]
 development = "envs/.env.development"
 staging = "envs/.env.staging"
 production = "envs/.env.production"

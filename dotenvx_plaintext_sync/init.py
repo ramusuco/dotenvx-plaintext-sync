@@ -2,7 +2,7 @@ import json
 import os
 import logging
 
-from dotenvx_ops.config import Config, CONFIG_FILE, GITIGNORE_PATH
+from dotenvx_plaintext_sync.config import Config, CONFIG_FILE, GITIGNORE_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ DEFAULT_CONFIG = {
         "production": "envs/.env.production",
     },
     "enc_dir": "enc",
-    "work_dir": "tmp/dotenvx-ops",
+    "work_dir": "tmp/dxps",
 }
 
 
@@ -22,7 +22,7 @@ def run_init() -> None:
     create_config_file()
     create_directories()
     update_gitignore()
-    logger.info("dotenvx-ops initialized successfully!")
+    logger.info("dxps initialized successfully!")
     logger.info(f"Edit {CONFIG_FILE} to customize settings.")
 
 
@@ -67,7 +67,7 @@ def update_gitignore() -> None:
         return
 
     with open(GITIGNORE_PATH, "a", encoding="utf-8") as f:
-        f.write("\n# dotenvx-ops\n")
+        f.write("\n# dxps\n")
         for entry in to_add:
             f.write(f"{entry}\n")
             logger.info(f"Added to .gitignore: {entry}")

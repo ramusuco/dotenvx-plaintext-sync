@@ -1,5 +1,5 @@
 [project]
-name = "dotenvx-ops"
+name = "dotenvx-plaintext-sync"
 version = "0.1.0"
 description = "CLI tool for syncing encrypted .env files across teams using dotenvx"
 readme = "README.md"
@@ -8,7 +8,7 @@ license = "MIT"
 authors = [
     { name = "ramusuco" }
 ]
-keywords = ["dotenv", "dotenvx", "encryption", "env", "sync", "ops"]
+keywords = ["dotenv", "dotenvx", "encryption", "env", "sync", "plaintext"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -30,15 +30,15 @@ dev = [
 ]
 
 [project.scripts]
-dotenvx-ops = "dotenvx_ops.cli:main"
+dxps = "dotenvx_plaintext_sync.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/ramusuco/dotenvx-ops"
-Repository = "https://github.com/ramusuco/dotenvx-ops"
+Homepage = "https://github.com/ramusuco/dotenvx-plaintext-sync"
+Repository = "https://github.com/ramusuco/dotenvx-plaintext-sync"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["dotenvx_ops"]
+packages = ["dotenvx_plaintext_sync"]

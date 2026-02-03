@@ -1,7 +1,7 @@
 import click
 import logging
 
-from dotenvx_ops import encryption, decryption
+from dotenvx_plaintext_sync import encryption, decryption
 
 
 @click.group()
@@ -35,7 +35,7 @@ def pull(env: str) -> None:
 
 @cli.command()
 def init() -> None:
-    from dotenvx_ops.init import run_init
+    from dotenvx_plaintext_sync.init import run_init
     run_init()
 
 

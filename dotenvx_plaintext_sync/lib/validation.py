@@ -1,7 +1,7 @@
 import logging
 import os
-from dotenvx_ops.config import get_config, GITIGNORE_PATH
-from dotenvx_ops.lib.io_utils import open_file
+from dotenvx_plaintext_sync.config import get_config, GITIGNORE_PATH
+from dotenvx_plaintext_sync.lib.io_utils import open_file
 
 logger = logging.getLogger(__name__)
 
