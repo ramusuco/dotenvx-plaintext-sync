@@ -2,7 +2,8 @@
 
 !*/
 
-!.dotenvx_ops
+!dotenvx_plaintext_sync/
+!dotenvx_plaintext_sync/**.py
 !LICENSE
 !README.md
 !pyproject.toml
