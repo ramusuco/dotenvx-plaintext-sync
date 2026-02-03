@@ -1,12 +1,8 @@
-.env/*
-tmp/*
-*.keys
-__pycache__
-*.pyc
-*.egg-info
-dist/
-build/
+*
 
-env_share/enc/*
-!env_share/enc/.gitkeep
-dxsync.json
+!*/
+
+!.dotenvx_ops
+!LICENSE
+!README.md
+!pyproject.toml

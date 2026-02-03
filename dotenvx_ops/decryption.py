@@ -9,7 +9,7 @@ from dotenvx_ops.lib.io_utils import open_file, cleanup_tmp
 logger = logging.getLogger(__name__)
 
 
-def main(target_env: str) -> None:
+def main(target_env: str, apply: bool = False) -> None:
     logger.info(f"Extracting latest env for target environment: {target_env}")
     validate_environment(target_env)
     paths = prepare_paths(target_env)
@@ -23,11 +23,19 @@ def main(target_env: str) -> None:
         run_decrypt(paths.work, paths.key)
         logger.info("Decrypted existing encrypted env file.")
         write_without_header(paths.work, paths.latest)
-        logger.info(f"wrote {paths.latest}")
+        logger.info(f"Wrote {paths.latest}")
+
+        if apply:
+            shutil.copy(paths.latest, paths.plain)
+            logger.info(f"Applied to {paths.plain}")
     finally:
         cleanup_tmp([paths.work])
         logger.info("Cleaned up temporary files.")
         ensure_encrypted_values(paths.enc)
+
+
+def pull(target_env: str) -> None:
+    main(target_env, apply=True)
 
 
 def write_without_header(

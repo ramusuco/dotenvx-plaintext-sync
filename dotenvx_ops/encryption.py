@@ -10,7 +10,7 @@ from dotenvx_ops.lib.io_utils import load_env_file, load_enc_file, open_file, cl
 logger = logging.getLogger(__name__)
 
 
-def main(target_env: str) -> None:
+def main(target_env: str, update: bool = False) -> None:
     logger.info(f"Extracting latest env for target environment: {target_env}")
     validate_environment(target_env)
     paths = prepare_paths(target_env)
@@ -30,7 +30,11 @@ def main(target_env: str) -> None:
             shutil.copy(paths.enc, paths.work)
             run_decrypt(paths.work, paths.key)
 
-        updated = True if created_new_enc else embed_difference(paths.plain, paths.work)
+        if update and not created_new_enc:
+            updated = embed_with_update(paths.plain, paths.work)
+        else:
+            updated = True if created_new_enc else embed_difference(paths.plain, paths.work)
+
         if not updated:
             logger.info("No missing keys. Skipped re-encrypt.")
             return
@@ -64,6 +68,58 @@ def embed_difference(
 
     add_data_to_plain_file(add_data, work_enc_file)
     return True
+
+
+def embed_with_update(
+        env_file: str,
+        work_enc_file: str
+) -> bool:
+    env_data = load_env_file(env_file)
+    enc_data = load_enc_file(work_enc_file)
+
+    new_keys = {k: v for k, v in env_data.items() if k not in enc_data}
+    changed_keys = {k: v for k, v in env_data.items() if k in enc_data and enc_data[k] != v}
+
+    if not new_keys and not changed_keys:
+        logger.warning("No changes detected.")
+        return False
+
+    print("\n=== Changes to be applied ===")
+    if new_keys:
+        print("\n[NEW]")
+        for k in new_keys:
+            print(f"  + {k}")
+    if changed_keys:
+        print("\n[UPDATE]")
+        for k in changed_keys:
+            print(f"  ~ {k}")
+    print()
+
+    confirm = input("Apply these changes? [y/N]: ").strip().lower()
+    if confirm != 'y':
+        logger.info("Cancelled.")
+        return False
+
+    if changed_keys:
+        remove_keys_from_file(changed_keys.keys(), work_enc_file)
+
+    all_changes = {**new_keys, **changed_keys}
+    add_data_to_plain_file(all_changes, work_enc_file)
+    return True
+
+
+def remove_keys_from_file(keys: list[str], file_path: str) -> None:
+    keys_set = set(keys)
+    lines = []
+    with open_file(file_path, 'r') as f:
+        for line in f:
+            if '=' in line:
+                key = line.split('=', 1)[0].strip()
+                if key in keys_set:
+                    continue
+            lines.append(line)
+    with open_file(file_path, 'w') as f:
+        f.writelines(lines)
 
 
 def add_data_to_plain_file(

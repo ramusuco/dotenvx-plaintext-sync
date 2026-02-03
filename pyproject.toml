@@ -33,8 +33,8 @@ dev = [
 dotenvx-ops = "dotenvx_ops.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/ramusuco/dotenvx-sync"
-Repository = "https://github.com/ramusuco/dotenvx-sync"
+Homepage = "https://github.com/ramusuco/dotenvx-ops"
+Repository = "https://github.com/ramusuco/dotenvx-ops"
 
 [build-system]
 requires = ["hatchling"]

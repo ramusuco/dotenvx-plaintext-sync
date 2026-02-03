@@ -16,14 +16,21 @@ def cli(verbose: bool) -> None:
 
 @cli.command()
 @click.argument("env")
-def encrypt(env: str) -> None:
-    encryption.main(env)
+@click.option("--update", is_flag=True, help="Update existing values (with confirmation)")
+def encrypt(env: str, update: bool) -> None:
+    encryption.main(env, update=update)
 
 
 @cli.command()
 @click.argument("env")
 def decrypt(env: str) -> None:
     decryption.main(env)
+
+
+@cli.command()
+@click.argument("env")
+def pull(env: str) -> None:
+    decryption.pull(env)
 
 
 @cli.command()

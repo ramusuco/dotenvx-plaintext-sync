@@ -101,29 +101,55 @@ your-project/
 Add or update keys in your plaintext file, then encrypt:
 
 ```bash
-# Edit envs/.env.development with your values
 dotenvx-ops encrypt development
 ```
 
 - First run: generates key file and `.enc`
-- Subsequent runs: **adds** new keys to existing `.enc` (doesn't overwrite)
+- Subsequent runs: **adds** new keys to existing `.enc` (doesn't overwrite existing values)
+
+### Update existing values
+
+To update values that already exist in the encrypted file:
+
+```bash
+dotenvx-ops encrypt development --update
+```
+
+This will:
+1. Compare your plaintext file with the encrypted file
+2. Show a diff of changes (new keys and updated values)
+3. Ask for confirmation before applying
+
+```
+=== Changes to be applied ===
+
+[NEW]
+  + NEW_API_KEY
+
+[UPDATE]
+  ~ DATABASE_URL
+  ~ SECRET_KEY
+
+Apply these changes? [y/N]:
+```
 
 ### Decrypt
 
-Get the key file from your team, then:
+Decrypt to `latest/` directory (safe, doesn't overwrite your working file):
 
 ```bash
 dotenvx-ops decrypt development
 # → Output: envs/latest/.env.development
 ```
 
-### Change existing values
+### Pull
 
-Since encryption is append-only:
+Decrypt and apply directly to your working file in one step:
 
-1. Remove the key from `enc/.env.development.enc`
-2. Update value in `envs/.env.development`
-3. Run `dotenvx-ops encrypt development`
+```bash
+dotenvx-ops pull development
+# → Decrypts and copies to envs/.env.development
+```
 
 ## Configuration
 
@@ -171,10 +197,10 @@ production = "envs/.env.production"
 
 ## Design Principles
 
-- **Append-only** - Existing encrypted keys are never auto-overwritten
-- **Non-destructive** - Decryption outputs to `latest/`, preserving your working files
+- **Safe by default** - `encrypt` only adds new keys, use `--update` to modify existing values
+- **Non-destructive** - `decrypt` outputs to `latest/`, use `pull` to apply to working file
 - **Validated** - Checks that all values are encrypted, env paths are protected
-- **Explicit** - Delete `.enc` manually to regenerate from scratch
+- **Confirmed** - Updates require explicit `y/N` confirmation
 
 ## License
 
