@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass
-from env_share.config import get_config
-from env_share.lib.io_utils import ensure_dirs
+from dotenvx_ops.config import get_config
+from dotenvx_ops.lib.io_utils import ensure_dirs
 
 
 @dataclass(frozen=True)

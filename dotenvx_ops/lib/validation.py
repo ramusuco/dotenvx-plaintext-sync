@@ -1,7 +1,7 @@
 import logging
 import os
-from env_share.config import get_config, GITIGNORE_PATH
-from env_share.lib.io_utils import open_file
+from dotenvx_ops.config import get_config, GITIGNORE_PATH
+from dotenvx_ops.lib.io_utils import open_file
 
 logger = logging.getLogger(__name__)
 

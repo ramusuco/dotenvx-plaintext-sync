@@ -9,7 +9,7 @@ except ImportError:
     import tomli as tomllib  # type: ignore
 
 
-CONFIG_FILE = "dxsync.json"
+CONFIG_FILE = "dotenvx-ops.json"
 PYPROJECT_FILE = "pyproject.toml"
 
 
@@ -25,7 +25,7 @@ class Config:
     env_dir: str = "envs"
     envs: dict[str, str] = field(default_factory=lambda: DEFAULT_ENVS.copy())
     enc_dir: str = "enc"
-    work_dir: str = "tmp/dxsync"
+    work_dir: str = "tmp/dotenvx-ops"
     keys_dir: str = ""
     latest_dir: str = ""
     encrypted_prefix: str = "encrypted:"
@@ -47,8 +47,8 @@ class Config:
         elif os.path.isfile(PYPROJECT_FILE):
             with open(PYPROJECT_FILE, "rb") as f:
                 pyproject = tomllib.load(f)
-            if "tool" in pyproject and "dxsync" in pyproject["tool"]:
-                config = cls._from_dict(pyproject["tool"]["dxsync"])
+            if "tool" in pyproject and "dotenvx-ops" in pyproject["tool"]:
+                config = cls._from_dict(pyproject["tool"]["dotenvx-ops"])
             else:
                 config = cls()
         else:
@@ -64,7 +64,7 @@ class Config:
             env_dir=env_dir,
             envs=data.get("envs", DEFAULT_ENVS.copy()),
             enc_dir=data.get("enc_dir", "enc"),
-            work_dir=data.get("work_dir", "tmp/dxsync"),
+            work_dir=data.get("work_dir", "tmp/dotenvx-ops"),
             keys_dir=data.get("keys_dir", ""),
             latest_dir=data.get("latest_dir", ""),
             encrypted_prefix=data.get("encrypted_prefix", "encrypted:"),

@@ -2,10 +2,10 @@ import os
 import sys
 import shutil
 import logging
-from env_share.lib.paths import prepare_paths
-from env_share.lib.dotenvx_runner import run_decrypt, run_encrypt
-from env_share.lib.validation import ensure_encrypted_values, ensure_gitignore, validate_files, validate_environment
-from env_share.lib.io_utils import load_env_file, load_enc_file, open_file, cleanup_tmp
+from dotenvx_ops.lib.paths import prepare_paths
+from dotenvx_ops.lib.dotenvx_runner import run_decrypt, run_encrypt
+from dotenvx_ops.lib.validation import ensure_encrypted_values, ensure_gitignore, validate_files, validate_environment
+from dotenvx_ops.lib.io_utils import load_env_file, load_enc_file, open_file, cleanup_tmp
 
 logger = logging.getLogger(__name__)
 

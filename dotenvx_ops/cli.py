@@ -1,7 +1,7 @@
 import click
 import logging
 
-from env_share import encryption, decryption
+from dotenvx_ops import encryption, decryption
 
 
 @click.group()
@@ -28,7 +28,7 @@ def decrypt(env: str) -> None:
 
 @cli.command()
 def init() -> None:
-    from env_share.init import run_init
+    from dotenvx_ops.init import run_init
     run_init()
 
 

@@ -1,18 +1,40 @@
-# dxsync
+# dotenvx-ops
 
 CLI tool for syncing encrypted `.env` files across teams using dotenvx.
 
-## Features
+## Why dotenvx-ops?
 
-- **Simple CLI** - `dxsync init`, `dxsync encrypt`, `dxsync decrypt`
-- **Per-environment encryption** - Separate keys for development, staging, production
-- **Non-destructive** - Never overwrites your local plaintext `.env` files
-- **Flexible paths** - Configure env file locations via `dxsync.json`
+[dotenvx](https://dotenvx.com/) is a great tool for encrypting `.env` files. It's designed to run apps with encrypted env files directly (`dotenvx run`), but sometimes you need **plaintext** `.env` files:
+
+- Your framework reads `.env` directly
+- You want to keep existing workflows
+- You need to inspect values during debugging
+
+### The problem with plaintext workflows
+
+When decrypting `.env` files manually, operational risks emerge:
+
+- **Path mistakes** - Typing paths manually every time leads to errors
+- **OS differences** - Path separators and behaviors vary across systems
+- **Multi-environment chaos** - Managing dev/staging/production separately is tedious
+- **Accidental commits** - Easy to forget gitignore and leak secrets
+
+### How dotenvx-ops helps
+
+| Problem | Solution |
+|---------|----------|
+| Path mistakes | Config file manages all paths centrally |
+| OS differences | Consistent interface across platforms |
+| Multi-environment | Just specify env name: `dotenvx-ops encrypt development` |
+| Accidental commits | Auto-configures gitignore, validates env paths are protected |
+| Overwriting team values | Append-only encryption preserves existing keys |
+| Losing local changes | Non-destructive decrypt outputs to `latest/`, not your working file |
+| Over-sharing keys | Separate key files per environment |
 
 ## Prerequisites
 
 - Python 3.11+
-- [dotenvx](https://dotenvx.com/docs/install) - Install via your preferred method:
+- [dotenvx](https://dotenvx.com/docs/install):
 
 ```bash
 # npm
@@ -28,7 +50,7 @@ curl -sfS https://dotenvx.sh | sh
 ## Installation
 
 ```bash
-pip install dxsync
+pip install dotenvx-ops
 ```
 
 ## Quick Start
@@ -36,13 +58,13 @@ pip install dxsync
 ```bash
 # 1. Initialize in your project
 cd your-project
-dxsync init
+dotenvx-ops init
 
 # 2. Create your plaintext env file
 echo "API_KEY=secret123" > envs/.env.development
 
 # 3. Encrypt it
-dxsync encrypt development
+dotenvx-ops encrypt development
 # → Creates enc/.env.development.enc and envs/keys/development.keys
 
 # 4. Share envs/keys/development.keys with your team securely
@@ -54,11 +76,11 @@ git commit -m "Add encrypted development env"
 
 ## Directory Structure
 
-After `dxsync init`:
+After `dotenvx-ops init`:
 
 ```
 your-project/
-├── dxsync.json             # Configuration
+├── dotenvx-ops.json        # Configuration
 ├── enc/                    # Encrypted files (commit these)
 │   └── .env.development.enc
 ├── envs/                   # Local files (gitignored)
@@ -69,7 +91,7 @@ your-project/
 │   │   └── development.keys
 │   └── latest/             # Decrypted output
 │       └── .env.development
-└── .gitignore              # Updated by dxsync init
+└── .gitignore              # Updated automatically
 ```
 
 ## Usage
@@ -80,30 +102,32 @@ Add or update keys in your plaintext file, then encrypt:
 
 ```bash
 # Edit envs/.env.development with your values
-dxsync encrypt development
+dotenvx-ops encrypt development
 ```
 
-- First run: auto-generates key file and `.enc`
-- Subsequent runs: adds new keys to existing `.enc`
+- First run: generates key file and `.enc`
+- Subsequent runs: **adds** new keys to existing `.enc` (doesn't overwrite)
 
 ### Decrypt
 
 Get the key file from your team, then:
 
 ```bash
-dxsync decrypt development
+dotenvx-ops decrypt development
 # → Output: envs/latest/.env.development
 ```
 
 ### Change existing values
 
+Since encryption is append-only:
+
 1. Remove the key from `enc/.env.development.enc`
 2. Update value in `envs/.env.development`
-3. Run `dxsync encrypt development`
+3. Run `dotenvx-ops encrypt development`
 
 ## Configuration
 
-Edit `dxsync.json` to customize:
+Edit `dotenvx-ops.json`:
 
 ```json
 {
@@ -114,18 +138,18 @@ Edit `dxsync.json` to customize:
     "production": "envs/.env.production"
   },
   "enc_dir": "enc",
-  "work_dir": "tmp/dxsync"
+  "work_dir": "tmp/dotenvx-ops"
 }
 ```
 
 Or use `pyproject.toml`:
 
 ```toml
-[tool.dxsync]
+[tool.dotenvx-ops]
 env_dir = "envs"
 enc_dir = "enc"
 
-[tool.dxsync.envs]
+[tool.dotenvx-ops.envs]
 development = "envs/.env.development"
 staging = "envs/.env.staging"
 production = "envs/.env.production"
@@ -143,13 +167,14 @@ production = "envs/.env.production"
 }
 ```
 
-Note: All env paths must be under `env_dir` for security (gitignore protection).
+**Note:** All env paths must be under `env_dir`. This is enforced to ensure gitignore protection.
 
 ## Design Principles
 
-- **Append-only** - Existing keys in `.enc` are never auto-overwritten
-- **Non-destructive** - Decryption outputs to `latest/`, not your working `.env`
-- **Explicit reset** - Delete `.enc` manually to regenerate
+- **Append-only** - Existing encrypted keys are never auto-overwritten
+- **Non-destructive** - Decryption outputs to `latest/`, preserving your working files
+- **Validated** - Checks that all values are encrypted, env paths are protected
+- **Explicit** - Delete `.enc` manually to regenerate from scratch
 
 ## License
 
